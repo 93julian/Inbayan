@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    
-    <meta charset='utf-8'> <!-- con esta instruccion aparecen -->
+    <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <!--<script src='main.js'></script>-->
     <title>Inbayan - Contratos</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
-
 <body>
-    
     <div class="container mt-5">
+        
         <h2>Registrar Contrato</h2>
-        <form id="contratoForm" method="post" action="/tu-ruta-de-registro">
+        <form id="contratoForm" method="post" action="/tu-ruta-de-registro" style="width: 800 em; align-content: center;">
             <div class="form-group">
                 <label for="NombreCompleto">Nombre Completo</label>
                 <input type="text" id="NombreCompleto" name="NombreCompleto" class="form-control" required />
                 <span class="text-danger" id="errorNombreCompleto"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="Celular">Celular</label>
                 <input type="tel" id="Celular" name="Celular" class="form-control" required />
+                <input type="text" onkeypress='return validaNumericos(event)'/>
                 <span class="text-danger" id="errorCelular"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="Email">Email</label>
                 <input type="email" id="Email" name="Email" class="form-control" required />
                 <span class="text-danger" id="errorEmail"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="TipoDocumento">Tipo de Documento</label>
                 <select id="TipoDocumento" name="TipoDocumento" class="form-control" required>
@@ -42,7 +40,7 @@
                 </select>
                 <span class="text-danger" id="errorTipoDocumento"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="NumeroIdentificacion">Número de Identificación</label>
                 <input type="text" id="NumeroIdentificacion" name="NumeroIdentificacion" class="form-control" required />
@@ -50,35 +48,35 @@
             </div>
 
             <div class="form-group">
-                <label for="DocumentoArrendatario">Documento de Identificación del Arrendatario:</label>
+                <label for="DocumentoArrendatario">Documento de Identificación del Arrendatario</label>
                 <input id="DocumentoArrendatario" name="DocumentoArrendatario" class="form-control" type="file" required />
                 <span class="text-danger" id="errorDocumentoArrendatario"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="FechaIngreso">Fecha de Ingreso</label>
                 <input type="date" id="FechaIngreso" name="FechaIngreso" class="form-control" required />
                 <span class="text-danger" id="errorFechaIngreso"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="FechaSalida">Fecha de Salida</label>
                 <input type="date" id="FechaSalida" name="FechaSalida" class="form-control" required />
                 <span class="text-danger" id="errorFechaSalida"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="Valor">Valor</label>
                 <input type="number" id="Valor" name="Valor" class="form-control" required />
                 <span class="text-danger" id="errorValor"></span>
             </div>
-    
+
             <div class="form-group">
                 <label for="NumeroAcompanantes">Número de Acompañantes</label>
                 <input type="number" id="NumeroAcompanantes" name="NumeroAcompanantes" class="form-control" required />
                 <span class="text-danger" id="errorNumeroAcompanantes"></span>
             </div>
-    
+
             <!-- Contenedor para los campos de acompañantes -->
             <div id="acompanantesContainer"></div>
 
@@ -87,19 +85,19 @@
                 <label for="AutorizaTratamientoDatos" class="form-check-label">Autorizo el tratamiento de datos personales</label>
                 <span class="text-danger" id="errorAutorizaTratamientoDatos"></span>
             </div>
-    
+
             <div class="form-check">
                 <input type="checkbox" id="AceptaPoliticaDatos" name="AceptaPoliticaDatos" class="form-check-input" required />
                 <label for="AceptaPoliticaDatos" class="form-check-label">Acepto la política de datos</label>
                 <span class="text-danger" id="errorAceptaPoliticaDatos"></span>
             </div>
-    
+
             <div class="form-check">
                 <input type="checkbox" id="AutorizaContrato" name="AutorizaContrato" class="form-check-input" required />
                 <label for="AutorizaContrato" class="form-check-label">Autorizo el contenido del contrato</label>
                 <span class="text-danger" id="errorAutorizaContrato"></span>
             </div>
-    
+
             <button type="button" class="btn btn-primary mt-3" onclick="validarFormulario()">Registrar Contrato</button>
         </form>
     </div>
@@ -128,9 +126,9 @@
         document.getElementById('NumeroAcompanantes').addEventListener('change', function () {
             const container = document.getElementById('acompanantesContainer');
             container.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevos campos
-    
+
             const numeroAcompanantes = parseInt(this.value);
-            
+
             for (let i = 1; i <= numeroAcompanantes; i++) {
                 const div = document.createElement('div');
                 div.classList.add('mb-3', 'border', 'p-3', 'bg-light');
@@ -152,303 +150,105 @@
                             <option value="TarjetaIdentidad">Tarjeta de Identidad</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group d-none" id="Acompanante${i}DocumentoDiv">
                         <label for="Acompanante${i}Documento">Documento de Identificación</label>
                         <input type="file" id="Acompanante${i}Documento" name="Acompanante[${i}].Documento" class="form-control" accept="image/*,.pdf" />
+                    </div>
+                    <div class="form-check d-none" id="Acompanante${i}AutorizacionDiv">
+                        <input type="checkbox" id="Acompanante${i}AutorizaTratamientoDatos" name="Acompanante[${i}].AutorizaTratamientoDatos" class="form-check-input" />
+                        <label for="Acompanante${i}AutorizaTratamientoDatos" class="form-check-label">Autorizo el tratamiento de datos personales</label>
                     </div>
                 `;
                 container.appendChild(div);
             }
         });
-    
+
         document.getElementById('acompanantesContainer').addEventListener('input', function (e) {
-            if (e.target.classList.contains('edad-acompanante')) {
-                const ageInput = e.target;
-                const documentTypeSelect = ageInput.parentElement.nextElementSibling.querySelector('.tipo-documento-acompanante');
-                const documentUploadInput = ageInput.parentElement.nextElementSibling.nextElementSibling.querySelector('input[type="file"]');
-    
-                if (parseInt(ageInput.value) < 18) {
-                    documentTypeSelect.value = 'RegistroCivil';
-                    documentUploadInput.accept = 'image/*,.pdf';
+            if (e.target.matches('.edad-acompanante')) {
+                const edad = parseInt(e.target.value);
+                const index = e.target.id.match(/\d+/)[0];
+                const documentoDiv = document.getElementById(`Acompanante${index}DocumentoDiv`);
+                const autorizacionDiv = document.getElementById(`Acompanante${index}AutorizacionDiv`);
+
+                if (edad < 18) {
+                    documentoDiv.classList.remove('d-none');
+                    autorizacionDiv.classList.remove('d-none');
                 } else {
-                    documentTypeSelect.value = 'Cedula';
-                    documentUploadInput.accept = 'image/*,.pdf';
+                    documentoDiv.classList.add('d-none');
+                    autorizacionDiv.classList.add('d-none');
                 }
             }
         });
 
         function validarFormulario() {
-            const form = document.getElementById('contratoForm');
-            const formData = new FormData(form);
-            const modalBody = document.querySelector('#validationModal .modal-body');
-            const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+            let valido = true;
+            let mensajeError = '';
 
-            let valid = true;
-            let message = '';
+            const campos = [
+                { id: 'NombreCompleto', label: 'Nombre Completo' },
+                { id: 'Celular', label: 'Celular' },
+                { id: 'Email', label: 'Email' },
+                { id: 'TipoDocumento', label: 'Tipo de Documento' },
+                { id: 'NumeroIdentificacion', label: 'Número de Identificación' },
+                { id: 'DocumentoArrendatario', label: 'Documento de Identificación del Arrendatario' },
+                { id: 'FechaIngreso', label: 'Fecha de Ingreso' },
+                { id: 'FechaSalida', label: 'Fecha de Salida' },
+                { id: 'Valor', label: 'Valor' },
+                { id: 'NumeroAcompanantes', label: 'Número de Acompañantes' }
+            ];
 
-            // Validar cada campo requerido
-            formData.forEach((value, key) => {
-                if (!value) {
-                    valid = false;
-                    message += `<p>El campo <strong>${key}</strong> es obligatorio.</p>`;
-                }
-            });
-
-            // Validar si el documento del arrendatario ha sido cargado
-            const documentoArrendatario = document.getElementById('DocumentoArrendatario');
-            if (!documentoArrendatario.files.length) {
-                valid = false;
-                message += `<p>El documento de identificación del arrendatario es obligatorio.</p>`;
-            }
-
-            // Validar si se ha cargado un documento para cada acompañante
-            const acompanantes = document.querySelectorAll('[name^="Acompanantes"][type="file"]');
-            acompanantes.forEach((acompanante, index) => {
-                if (!acompanante.files.length) {
-                    valid = false;
-                    message += `<p>El documento de identificación para el acompañante ${index + 1} es obligatorio.</p>`;
-                }
-            });
-
-            if (valid) {
-                message = '<p>Todos los datos se han llenado correctamente.</p>';
-            }
-
-            // Insertar el mensaje en el cuerpo del modal
-            modalBody.innerHTML = message;
-
-            // Mostrar el modal
-            validationModal.show();
-
-            // Si todo es válido, enviar el formulario
-            if (valid) {
-                form.submit();
-            }
-        }
-    </script>
-</body>
-
-<!--
-<body>
-    
-    <div class="container mt-5">
-        <h2>Registrar Contrato</h2>
-        <form id="contratoForm" method="post" action="/tu-ruta-de-registro">
-            <div class="form-group">
-                <label for="NombreCompleto">Nombre Completo</label>
-                <input type="text" id="NombreCompleto" name="NombreCompleto" class="form-control" required />
-                <span class="text-danger" id="errorNombreCompleto"></span>
-            </div>
-    
-            <div class="form-group">
-                <label for="Celular">Celular</label>
-                <input type="tel" id="Celular" name="Celular" class="form-control" required />
-                <span class="text-danger" id="errorCelular"></span>
-            </div>
-    
-            <div class="form-group">
-                <label for="Email">Email</label>
-                <input type="email" id="Email" name="Email" class="form-control" required />
-                <span class="text-danger" id="errorEmail"></span>
-            </div>
-    
-            <div class="form-group">
-                <label for="TipoDocumento">Tipo de Documento</label>
-                <select id="TipoDocumento" name="TipoDocumento" class="form-control" required>
-                    <option value="Cedula">Cédula</option>
-                    <option value="TarjetaIdentidad">Tarjeta de Identidad</option>
-                    <option value="RegistroCivil">Registro Civil</option>
-                    <option value="CedulaExtranjeria">Cédula de Extranjería</option>
-                </select>
-                <span class="text-danger" id="errorTipoDocumento"></span>
-            </div>
-    
-            <div class="form-group">
-                <label for="NumeroIdentificacion">Número de Identificación</label>
-                <input type="text" id="NumeroIdentificacion" name="NumeroIdentificacion" class="form-control" required />
-                <span class="text-danger" id="errorNumeroIdentificacion"></span>
-            </div>
-
-            <div class="form-group">
-        <label asp-for="DocumentoArrendatario">Documento de Identificación del Arrendatario:</label>
-        <input asp-for="DocumentoArrendatario" class="form-control" type="file" />
-        <span asp-validation-for="DocumentoArrendatario" class="text-danger"></span>
-    </div>
-    
-            <div class="form-group">
-                <label for="FechaIngreso">Fecha de Ingreso</label>
-                <input type="date" id="FechaIngreso" name="FechaIngreso" class="form-control" required />
-                <span class="text-danger" id="errorFechaIngreso"></span>
-            </div>
-    
-            <div class="form-group">
-                <label for="FechaSalida">Fecha de Salida</label>
-                <input type="date" id="FechaSalida" name="FechaSalida" class="form-control" required />
-                <span class="text-danger" id="errorFechaSalida"></span>
-            </div>
-    
-            <div class="form-group">
-                <label for="Valor">Valor</label>
-                <input type="number" id="Valor" name="Valor" class="form-control" required />
-                <span class="text-danger" id="errorValor"></span>
-            </div>
-    
-            <div class="form-group">
-                <label for="NumeroAcompanantes">Número de Acompañantes</label>
-                <input type="number" id="NumeroAcompanantes" name="NumeroAcompanantes" class="form-control" required />
-                <span class="text-danger" id="errorNumeroAcompanantes"></span>
-            </div>
-    
-            <!-- Contenedor para los campos de acompañantes -->
-        <!--<div id="acompanantesContainer"></div>
-
-            <div class="form-check">
-                <input type="checkbox" id="AutorizaTratamientoDatos" name="AutorizaTratamientoDatos" class="form-check-input" required />
-                <label for="AutorizaTratamientoDatos" class="form-check-label">Autorizo el tratamiento de datos personales</label>
-                <span class="text-danger" id="errorAutorizaTratamientoDatos"></span>
-            </div>
-    
-            <div class="form-check">
-                <input type="checkbox" id="AceptaPoliticaDatos" name="AceptaPoliticaDatos" class="form-check-input" required />
-                <label for="AceptaPoliticaDatos" class="form-check-label">Acepto la política de datos</label>
-                <span class="text-danger" id="errorAceptaPoliticaDatos"></span>
-            </div>
-    
-            <div class="form-check">
-                <input type="checkbox" id="AutorizaContrato" name="AutorizaContrato" class="form-check-input" required />
-                <label for="AutorizaContrato" class="form-check-label">Autorizo el contenido del contrato</label>
-                <span class="text-danger" id="errorAutorizaContrato"></span>
-            </div>
-    
-            <button type="submit" class="btn btn-primary mt-3">Registrar Contrato</button>
-        </form>
-    </div>
-
-      <script src="./js/bootstrap.bundle.js"></script>
-
-      <script>
-        document.getElementById('NumeroAcompanantes').addEventListener('change', function () {
-            const container = document.getElementById('acompanantesContainer');
-            container.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevos campos
-    
-            const numeroAcompanantes = parseInt(this.value);
-            
-            for (let i = 1; i <= numeroAcompanantes; i++) {
-                const div = document.createElement('div');
-                div.classList.add('mb-3', 'border', 'p-3', 'bg-light');
-                div.innerHTML = `
-                    <h5>Acompañante ${i}</h5>
-                    <div class="form-group">
-                        <label for="Acompanante${i}Nombre">Nombre Completo</label>
-                        <input type="text" id="Acompanante${i}Nombre" name="Acompanantes[${i}].Nombre" class="form-control" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="Acompanante${i}Edad">Edad</label>
-                        <input type="number" id="Acompanante${i}Edad" name="Acompanantes[${i}].Edad" class="form-control edad-acompanante" required min="0" />
-                    </div>
-                    <div class="form-group">
-                        <label for="Acompanante${i}TipoDocumento">Tipo de Documento</label>
-                        <select id="Acompanante${i}TipoDocumento" name="Acompanantes[${i}].TipoDocumento" class="form-control tipo-documento-acompanante">
-                            <option value="Cedula">Cédula</option>
-                            <option value="RegistroCivil">Registro Civil</option>
-                            <option value="TarjetaIdentidad">Tarjeta de Identidad</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Acompanante${i}Documento">Documento de Identificación</label>
-                        <input type="file" id="Acompanante${i}Documento" name="Acompanantes[${i}].Documento" class="form-control" accept="image/*,.pdf" />
-                    </div>
-                `;
-                container.appendChild(div);
-            }
-        });
-    
-        document.getElementById('acompanantesContainer').addEventListener('input', function (e) {
-            if (e.target.classList.contains('edad-acompanante')) {
-                const ageInput = e.target;
-                const documentTypeSelect = ageInput.parentElement.nextElementSibling.querySelector('.tipo-documento-acompanante');
-                const documentUploadInput = ageInput.parentElement.nextElementSibling.nextElementSibling.querySelector('input[type="file"]');
-    
-                if (parseInt(ageInput.value) < 18) {
-                    documentTypeSelect.value = 'RegistroCivil';
-                    documentUploadInput.accept = 'image/*,.pdf';
+            campos.forEach(campo => {
+                const input = document.getElementById(campo.id);
+                if (!input.checkValidity()) {
+                    valido = false;
+                    mensajeError += `${campo.label} es requerido.<br>`;
+                    document.getElementById(`error${campo.id}`).innerText = `${campo.label} es requerido.`;
                 } else {
-                    documentTypeSelect.value = 'Cedula';
-                    documentUploadInput.accept = 'image/*,.pdf';
+                    document.getElementById(`error${campo.id}`).innerText = '';
                 }
+            });
+
+            const acompañantes = document.querySelectorAll('#acompanantesContainer .form-group');
+            acompañantes.forEach(group => {
+                const nombre = group.querySelector('input[name$=".Nombre"]');
+                const edad = group.querySelector('input[name$=".Edad"]');
+                const documento = group.querySelector('input[name$=".Documento"]');
+                const autorizacion = group.querySelector('input[name$=".AutorizaTratamientoDatos"]');
+
+                if (edad && parseInt(edad.value) < 18) {
+                    if (!documento.files.length) {
+                        valido = false;
+                        mensajeError += `Documento de identificación es requerido para acompañante ${nombre.value}.<br>`;
+                        documento.parentElement.querySelector('.text-danger').innerText = 'Documento de identificación es requerido.';
+                    } else {
+                        documento.parentElement.querySelector('.text-danger').innerText = '';
+                    }
+
+                    if (!autorizacion.checked) {
+                        valido = false;
+                        mensajeError += `Autorización para tratamiento de datos es requerida para acompañante ${nombre.value}.<br>`;
+                        autorizacion.parentElement.querySelector('.text-danger').innerText = 'Autorización es requerida.';
+                    } else {
+                        autorizacion.parentElement.querySelector('.text-danger').innerText = '';
+                    }
+                }
+            });
+
+            if (!valido) {
+                document.querySelector('#validationModal .modal-body').innerHTML = mensajeError;
+                const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+                validationModal.show();
+            } else {
+                document.getElementById('contratoForm').submit();
             }
-        });
+        }
     </script>
 
-<script>
-    function validarFormulario() {
-        const form = document.getElementById('contratoForm');
-        const formData = new FormData(form);
-        const modalBody = document.querySelector('#validationModal .modal-body');
-        const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
-
-        let valid = true;
-        let message = '';
-
-        // Validar cada campo requerido
-        formData.forEach((value, key) => {
-            if (!value) {
-                valid = false;
-                message += `<p>El campo <strong>${key}</strong> es obligatorio.</p>`;
-            }
-        });
-
-        // Validar si el documento del arrendatario ha sido cargado
-        const documentoArrendatario = form.querySelector('[asp-for="DocumentoArrendatario"]');
-        if (!documentoArrendatario.files.length) {
-            valid = false;
-            message += `<p>El documento de identificación del arrendatario es obligatorio.</p>`;
-        }
-
-        // Validar si se ha cargado un documento para cada acompañante
-        const acompanantes = document.querySelectorAll('[name="DocumentoAcompanantes[]"]');
-        acompanantes.forEach((acompanante, index) => {
-            if (!acompanante.files.length) {
-                valid = false;
-                message += `<p>El documento de identificación para el acompañante ${index + 1} es obligatorio.</p>`;
-            }
-        });
-
-        if (valid) {
-            message = '<p>Todos los datos se han llenado correctamente.</p>';
-        }
-
-        // Insertar el mensaje en el cuerpo del modal
-        modalBody.innerHTML = message;
-
-        // Mostrar el modal
-        validationModal.show();
-
-        // Si todo es válido, enviar el formulario
-        if (valid) {
-            form.submit();
-        }
-    }
-</script>
-
-<!--
-     Modal 
-<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="validationModalLabel">Validación de Formulario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Mensaje de validación se inserta dinámicamente aquí 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-</body>-->
+function validaNumericos(event) {
+    if(event.charCode >= 48 && event.charCode <= 57){
+      return true;
+     }
+     return false;        
+}
+</body>
 </html>
