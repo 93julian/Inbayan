@@ -8,9 +8,9 @@
 </head>
 <body>
     <div class="container mt-5">
-        
         <h2>Registrar Contrato</h2>
-        <form id="contratoForm" method="post" action="/tu-ruta-de-registro" style="width: 800 em; align-content: center;">
+        <form id="contratoForm" method="post" action="/tu-ruta-de-registro">
+            <!-- Datos del arrendatario -->
             <div class="form-group">
                 <label for="NombreCompleto">Nombre Completo</label>
                 <input type="text" id="NombreCompleto" name="NombreCompleto" class="form-control" required />
@@ -19,8 +19,7 @@
 
             <div class="form-group">
                 <label for="Celular">Celular</label>
-                <input type="tel" id="Celular" name="Celular" class="form-control" required />
-                <!--<input type="text" onkeypress='return validaNumericos(event)'/>-->
+                <input type="tel" id="Celular" name="Celular" class="form-control" required onkeypress="return validaNumericos(event)" />
                 <span class="text-danger" id="errorCelular"></span>
             </div>
 
@@ -30,6 +29,7 @@
                 <span class="text-danger" id="errorEmail"></span>
             </div>
 
+            <!-- Información del contrato -->
             <div class="form-group">
                 <label for="TipoDocumento">Tipo de Documento</label>
                 <select id="TipoDocumento" name="TipoDocumento" class="form-control" required>
@@ -49,10 +49,11 @@
 
             <div class="form-group">
                 <label for="DocumentoArrendatario">Documento de Identificación del Arrendatario</label>
-                <input id="DocumentoArrendatario" name="DocumentoArrendatario" class="form-control" type="file" required />
+                <input id="DocumentoArrendatario" name="DocumentoArrendatario" class="form-control" type="file" accept="application/pdf" required />
                 <span class="text-danger" id="errorDocumentoArrendatario"></span>
             </div>
 
+            <!-- Fechas del contrato -->
             <div class="form-group">
                 <label for="FechaIngreso">Fecha de Ingreso</label>
                 <input type="date" id="FechaIngreso" name="FechaIngreso" class="form-control" required />
@@ -65,6 +66,7 @@
                 <span class="text-danger" id="errorFechaSalida"></span>
             </div>
 
+            <!-- Detalles adicionales -->
             <div class="form-group">
                 <label for="Valor">Valor</label>
                 <input type="number" id="Valor" name="Valor" class="form-control" required />
@@ -80,6 +82,7 @@
             <!-- Contenedor para los campos de acompañantes -->
             <div id="acompanantesContainer"></div>
 
+            <!-- Autorizaciones -->
             <div class="form-check">
                 <input type="checkbox" id="AutorizaTratamientoDatos" name="AutorizaTratamientoDatos" class="form-check-input" required />
                 <label for="AutorizaTratamientoDatos" class="form-check-label">Autorizo el tratamiento de datos personales</label>
@@ -144,111 +147,114 @@
                     </div>
                     <div class="form-group">
                         <label for="Acompanante${i}TipoDocumento">Tipo de Documento</label>
-                        <select id="Acompanante${i}TipoDocumento" name="Acompanante[${i}].TipoDocumento" class="form-control tipo-documento-acompanante">
+                        <select id="Acompanante${i}TipoDocumento" name="Acompanante[${i}].TipoDocumento" class="form-control tipo-documento-acompanante" required>
                             <option value="Cedula">Cédula</option>
-                            <option value="RegistroCivil">Registro Civil</option>
                             <option value="TarjetaIdentidad">Tarjeta de Identidad</option>
+                            <option value="RegistroCivil">Registro Civil</option>
+                            <option value="CedulaExtranjeria">Cédula de Extranjería</option>
                         </select>
                     </div>
-                    <div class="form-group d-none" id="Acompanante${i}DocumentoDiv">
-                        <label for="Acompanante${i}Documento">Documento de Identificación</label>
-                        <input type="file" id="Acompanante${i}Documento" name="Acompanante[${i}].Documento" class="form-control" accept="image/*,.pdf" />
+                    <div class="form-group">
+                        <label for="Acompanante${i}NumeroIdentificacion">Número de Identificación</label>
+                        <input type="text" id="Acompanante${i}NumeroIdentificacion" name="Acompanante[${i}].NumeroIdentificacion" class="form-control" required />
                     </div>
-                    <div class="form-check d-none" id="Acompanante${i}AutorizacionDiv">
-                        <input type="checkbox" id="Acompanante${i}AutorizaTratamientoDatos" name="Acompanante[${i}].AutorizaTratamientoDatos" class="form-check-input" />
-                        <label for="Acompanante${i}AutorizaTratamientoDatos" class="form-check-label">Autorizo el tratamiento de datos personales</label>
+                    <div class="form-group documento-acompanante">
+                        <label for="Acompanante${i}Documento">Documento de Identificación</label>
+                        <input type="file" id="Acompanante${i}Documento" name="Acompanante[${i}].Documento" class="form-control" accept="application/pdf" />
+                        <span class="text-danger" id="errorAcompanante${i}Documento"></span>
+                    </div>
+                    <div class="form-group autorizacion-menor">
+                        <label for="Acompanante${i}Autorizacion">Autorización de los Padres (PDF)</label>
+                        <input type="file" id="Acompanante${i}Autorizacion" name="Acompanante[${i}].Autorizacion" class="form-control" accept="application/pdf" />
+                        <span class="text-danger" id="errorAcompanante${i}Autorizacion"></span>
                     </div>
                 `;
                 container.appendChild(div);
             }
+
+            // Mostrar/ocultar campos de autorización según la edad
+            actualizarAutorizaciones();
         });
 
-        document.getElementById('acompanantesContainer').addEventListener('input', function (e) {
-            if (e.target.matches('.edad-acompanante')) {
-                const edad = parseInt(e.target.value);
-                const index = e.target.id.match(/\d+/)[0];
-                const documentoDiv = document.getElementById(`Acompanante${index}DocumentoDiv`);
-                const autorizacionDiv = document.getElementById(`Acompanante${index}AutorizacionDiv`);
+        function actualizarAutorizaciones() {
+            document.querySelectorAll('.edad-acompanante').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    const edad = parseInt(this.value);
+                    const autorizacionDiv = this.closest('div.mb-3').querySelector('.autorizacion-menor');
+                    if (edad < 18) {
+                        autorizacionDiv.style.display = 'block';
+                        autorizacionDiv.querySelector('input').required = true;
+                    } else {
+                        autorizacionDiv.style.display = 'none';
+                        autorizacionDiv.querySelector('input').required = false;
+                    }
+                });
+            });
+        }
 
-                if (edad < 18) {
-                    documentoDiv.classList.remove('d-none');
-                    autorizacionDiv.classList.remove('d-none');
+        document.addEventListener('change', function (event) {
+            if (event.target.classList.contains('tipo-documento-acompanante')) {
+                const tipoDocumento = event.target.value;
+                const contenedorCampos = event.target.closest('div.mb-3');
+                const documentoDiv = contenedorCampos.querySelector('.documento-acompanante');
+                const autorizacionDiv = contenedorCampos.querySelector('.autorizacion-menor');
+                
+                if (tipoDocumento === 'Cedula') {
+                    documentoDiv.style.display = 'none';
+                    autorizacionDiv.style.display = 'none';
+                    documentoDiv.querySelector('input').required = false;
+                    autorizacionDiv.querySelector('input').required = false;
                 } else {
-                    documentoDiv.classList.add('d-none');
-                    autorizacionDiv.classList.add('d-none');
+                    documentoDiv.style.display = 'block';
+                    autorizacionDiv.style.display = 'block';
+                    documentoDiv.querySelector('input').required = true;
+                    autorizacionDiv.querySelector('input').required = true;
                 }
             }
         });
 
+        function validaNumericos(event) {
+            if (event.charCode >= 48 && event.charCode <= 57) {
+                return true;
+            }
+            return false;
+        }
+
         function validarFormulario() {
-            let valido = true;
-            let mensajeError = '';
+            let formValido = true;
+            const errorMessages = [];
 
-            const campos = [
-                { id: 'NombreCompleto', label: 'Nombre Completo' },
-                { id: 'Celular', label: 'Celular' },
-                { id: 'Email', label: 'Email' },
-                { id: 'TipoDocumento', label: 'Tipo de Documento' },
-                { id: 'NumeroIdentificacion', label: 'Número de Identificación' },
-                { id: 'DocumentoArrendatario', label: 'Documento de Identificación del Arrendatario' },
-                { id: 'FechaIngreso', label: 'Fecha de Ingreso' },
-                { id: 'FechaSalida', label: 'Fecha de Salida' },
-                { id: 'Valor', label: 'Valor' },
-                { id: 'NumeroAcompanantes', label: 'Número de Acompañantes' }
-            ];
+            // Validar nombre completo
+            const nombreCompleto = document.getElementById('NombreCompleto').value;
+            if (nombreCompleto.trim() === '') {
+                formValido = false;
+                errorMessages.push('El nombre completo es requerido.');
+            }
 
-            campos.forEach(campo => {
-                const input = document.getElementById(campo.id);
-                if (!input.checkValidity()) {
-                    valido = false;
-                    mensajeError += `${campo.label} es requerido.<br>`;
-                    document.getElementById(`error${campo.id}`).innerText = `${campo.label} es requerido.`;
-                } else {
-                    document.getElementById(`error${campo.id}`).innerText = '';
-                }
-            });
+            // Validar celular
+            const celular = document.getElementById('Celular').value;
+            if (celular.trim() === '' || celular.length < 10) {
+                formValido = false;
+                errorMessages.push('El celular es requerido y debe tener al menos 10 dígitos.');
+            }
 
-            const acompañantes = document.querySelectorAll('#acompanantesContainer .form-group');
-            acompañantes.forEach(group => {
-                const nombre = group.querySelector('input[name$=".Nombre"]');
-                const edad = group.querySelector('input[name$=".Edad"]');
-                const documento = group.querySelector('input[name$=".Documento"]');
-                const autorizacion = group.querySelector('input[name$=".AutorizaTratamientoDatos"]');
+            // Validar email
+            const email = document.getElementById('Email').value;
+            if (email.trim() === '') {
+                formValido = false;
+                errorMessages.push('El email es requerido.');
+            }
 
-                if (edad && parseInt(edad.value) < 18) {
-                    if (!documento.files.length) {
-                        valido = false;
-                        mensajeError += `Documento de identificación es requerido para acompañante ${nombre.value}.<br>`;
-                        documento.parentElement.querySelector('.text-danger').innerText = 'Documento de identificación es requerido.';
-                    } else {
-                        documento.parentElement.querySelector('.text-danger').innerText = '';
-                    }
-
-                    if (!autorizacion.checked) {
-                        valido = false;
-                        mensajeError += `Autorización para tratamiento de datos es requerida para acompañante ${nombre.value}.<br>`;
-                        autorizacion.parentElement.querySelector('.text-danger').innerText = 'Autorización es requerida.';
-                    } else {
-                        autorizacion.parentElement.querySelector('.text-danger').innerText = '';
-                    }
-                }
-            });
-
-            if (!valido) {
-                document.querySelector('#validationModal .modal-body').innerHTML = mensajeError;
-                const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
-                validationModal.show();
+            // Mostrar errores
+            if (!formValido) {
+                const modalBody = document.querySelector('#validationModal .modal-body');
+                modalBody.innerHTML = '<ul>' + errorMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
+                new bootstrap.Modal(document.getElementById('validationModal')).show();
             } else {
                 document.getElementById('contratoForm').submit();
             }
         }
     </script>
-<!--
-function validaNumericos(event) {
-    if(event.charCode >= 48 && event.charCode <= 57){
-      return true;
-     }
-     return false;        
-}-->
 </body>
 </html>
+
